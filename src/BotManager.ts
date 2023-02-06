@@ -1,11 +1,12 @@
-import { MinecraftBot } from './MinecraftBot';
+import { CombatBot } from './bots/CombatBot';
+import { MinecraftBot } from './bots/MinecraftBot';
+import { MovementBot } from './bots/MovementBot';
 
 export class BotManager {
     private server: string;
     private bots: Array<MinecraftBot>;
     private isCombatEnabled!: Boolean
     private static pathFindingPoints: any;
-
 
     constructor(server: string) {
         this.bots = new Array<MinecraftBot>();
@@ -17,7 +18,7 @@ export class BotManager {
     //Create a certain amount of bots and attempt to connect to server
     public async launchBots(amount: number) {
         for (let i = 0; i < amount;  i++) {
-            let bot = new MinecraftBot("bot" + this.bots.length, this.server, false)
+            let bot = new CombatBot("bot" + this.bots.length, this.server)
             bot.connectBot();
             this.bots.push(bot);
             await BotManager.sleep(8)
@@ -25,7 +26,7 @@ export class BotManager {
     }
 
     private loadConfig() {
-        BotManager.pathFindingPoints = JSON.parse(JSON.stringify(require("../Config/PathFindingPoints.json")))
+        BotManager.pathFindingPoints = JSON.parse(JSON.stringify(require("./Config/PathFindingPoints.json")))
 
     }
 

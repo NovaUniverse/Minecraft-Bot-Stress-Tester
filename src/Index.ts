@@ -1,4 +1,4 @@
-import { BotManager } from './bots/BotManager';
+import { BotManager } from './BotManager';
 
 const botManager = new BotManager("localhost");
 
