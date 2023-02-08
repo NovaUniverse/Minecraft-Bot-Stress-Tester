@@ -1,5 +1,6 @@
 import { MovementBot } from "./MovementBot";
 import { Entity } from 'prismarine-entity'
+import { plugin as pvp, TimingSolver }  from "mineflayer-pvp";
 
 export class CombatBot extends MovementBot {
     private readonly botAggresionRange = 10;
@@ -11,6 +12,10 @@ export class CombatBot extends MovementBot {
         super(botName, server)
         this.isCombatEnabled = false;
         this.inCombat = false;
+    }
+    public connectBot(): void {
+        super.connectBot();
+        this.mineflayerBot.loadPlugin(pvp);
     }
 
 

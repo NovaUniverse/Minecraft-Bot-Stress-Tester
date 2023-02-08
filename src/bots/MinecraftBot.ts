@@ -2,12 +2,9 @@ import { Bot, Player, createBot } from "mineflayer";
 import { Entity } from 'prismarine-entity'
 
 import { IndexedData } from "minecraft-data";
-import { plugin as pvp, TimingSolver }  from "mineflayer-pvp";
+
 
 export class MinecraftBot {
-
-    
-
     protected botName: string;
     private server: string;
 
@@ -27,10 +24,7 @@ export class MinecraftBot {
                 version: "1.19",
             });
 
-            console.log(this.botName + " is connecting")
-
-            
-            this.mineflayerBot.loadPlugin(pvp);
+            console.log(this.botName + " is connecting");
            
             this.mineflayerBot.on('playerJoined', () => this.onJoin());
             this.mineflayerBot.on('physicTick', () => this.tick());

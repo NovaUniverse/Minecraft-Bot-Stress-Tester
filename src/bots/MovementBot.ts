@@ -6,13 +6,20 @@ import { BotManager } from "../BotManager";
 
 export class MovementBot extends MinecraftBot {
     
-    private readonly botTravelRange = 45;
+    private readonly BOTTRAVELRANGE: number = 45;
+    private readonly WANDERCOOLDOWN: number = 2
+    private maxWonderDistance = 12;
     private lastReachedPoint!: Vec3;
+    private useSetPathPoints: Boolean;
+    private onWanderCooldown: Boolean;
     private _isMoving: Boolean;
 
-    constructor(botName: string, server: string) {
+
+    constructor(botName: string, server: string, useSetPathPoints: boolean = false) {
         super(botName, server)
         this._isMoving = false;
+        this.useSetPathPoints = useSetPathPoints
+        this.onWanderCooldown = false;
     }
 
     protected get isMoving(): Boolean {
@@ -26,12 +33,12 @@ export class MovementBot extends MinecraftBot {
     public connectBot(): void {
         super.connectBot();
         this.mineflayerBot.loadPlugin(pathfinder);
-
         this.mineflayerBot.on("goal_reached", () => this.onPathFinderGoalFinish())
     }
 
     protected onPathFinderGoalFinish(): void {
         this.isMoving = false;
+        this.startWanderCooldown()
     }
 
     protected onJoin(): void {
@@ -41,10 +48,25 @@ export class MovementBot extends MinecraftBot {
     
 
     protected tick(): void {
-        if (!this.isMoving) {
-            this.moveToNearestPathPoint();
+        if (!this.isMoving && !this.onWanderCooldown) {
+            //this.moveToNearestPathPoint();
+            this.wander();
             this.isMoving = true;
         }
+    }
+
+    private wander(): void {
+        const randomXOffset = Math.floor(Math.random()  * (this.maxWonderDistance - this.maxWonderDistance*-1) + this.maxWonderDistance*-1);
+        const randomYOffset = Math.floor(Math.random() * (this.maxWonderDistance - this.maxWonderDistance*-1) + this.maxWonderDistance*-1);
+        const currentPos = this.mineflayerBot.entity.position.clone();
+        this.mineflayerBot.pathfinder.setGoal(new goals.GoalNearXZ(currentPos.x + randomXOffset, currentPos.y + randomYOffset, 0.5));
+        this.onWanderCooldown = true;
+        
+    }
+
+    private async startWanderCooldown() {
+        await new Promise(resolve => {setTimeout(resolve, this.WANDERCOOLDOWN * 1000)})
+        this.onWanderCooldown = false;
     }
 
 
@@ -56,7 +78,6 @@ export class MovementBot extends MinecraftBot {
         }
         this.lastReachedPoint = movePoint.clone();
         this.mineflayerBot.pathfinder.setGoal(new goals.GoalNear(movePoint.x, movePoint.y, movePoint.z, 0.5));
-        console.log()
         console.log(this.botName + " is moving to : " + movePoint);
     }
 
@@ -75,7 +96,7 @@ export class MovementBot extends MinecraftBot {
                 if (!this.lastReachedPoint.equals(currentPos) && !cords.equals(this.lastReachedPoint)) {
                     closestPoints.push(cords);
                 }
-            }else if (currentPos.distanceTo(cords) <= this.botTravelRange) {
+            }else if (currentPos.distanceTo(cords) <= this.BOTTRAVELRANGE) {
                 closestPoints.push(cords);
             }
 
