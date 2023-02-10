@@ -1,3 +1,5 @@
 {
-    "isCombatEnabled": true
+  "localhost": "0.0.0.0",
+  "isCombatEnabled": false,
+  "usePathFindingPoints": false
 }
