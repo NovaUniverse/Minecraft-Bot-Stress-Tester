@@ -1,17 +1,14 @@
-import { CombatBot } from './bots/CombatBot';
 import { MinecraftBot } from './bots/MinecraftBot';
 import { MovementBot } from './bots/MovementBot';
 
 export class BotManager {
     private server: string;
     private bots: Array<MinecraftBot>;
-    private static pathFindingPoints: any;
+    
 
     constructor(server: string) {
         this.bots = new Array<MinecraftBot>();
-        this.server = server;
-        this.loadConfig();
-       
+        this.server = server;   
     }
 
     //Create a certain amount of bots and attempt to connect to server
@@ -22,16 +19,6 @@ export class BotManager {
             this.bots.push(bot);
             await BotManager.sleep(8)
         }
-    }
-
-    private loadConfig() {
-        BotManager.pathFindingPoints = JSON.parse(JSON.stringify(require("./Config/PathFindingPoints.json")))
-
-    }
-
-
-    public static getPathFindingPoints() {
-        return this.pathFindingPoints;
     }
 
     public static sleep(secounds: number) {

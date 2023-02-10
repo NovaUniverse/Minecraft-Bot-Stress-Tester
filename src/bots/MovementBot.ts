@@ -2,6 +2,7 @@ import { Movements, goals, pathfinder } from "mineflayer-pathfinder";
 import { MinecraftBot } from "./MinecraftBot";
 import { Vec3 } from 'vec3';
 import { BotManager } from "../BotManager";
+import { ConfigManager } from "../configManager";
 
 
 export class MovementBot extends MinecraftBot {
@@ -11,15 +12,18 @@ export class MovementBot extends MinecraftBot {
     private maxWonderDistance = 12;
     private lastReachedPoint!: Vec3;
     private useSetPathPoints: Boolean;
+    private doWonder: Boolean;
     private onWanderCooldown: Boolean;
     private _isMoving: Boolean;
 
 
-    constructor(botName: string, server: string, useSetPathPoints: boolean = false) {
+    constructor(botName: string, server: string) {
         super(botName, server)
         this._isMoving = false;
-        this.useSetPathPoints = useSetPathPoints
+        this.useSetPathPoints = false;
+        this.doWonder = false;
         this.onWanderCooldown = false;
+        
     }
 
     protected get isMoving(): Boolean {
@@ -48,11 +52,12 @@ export class MovementBot extends MinecraftBot {
     
 
     protected tick(): void {
-        if (!this.isMoving && !this.onWanderCooldown) {
-            //this.moveToNearestPathPoint();
+        if (this.useSetPathPoints && !this.isMoving) {
+            this.moveToNearestPathPoint();
+        } else if (!this.isMoving && !this.onWanderCooldown && this.doWonder) {
             this.wander();
             this.isMoving = true;
-        }
+        } 
     }
 
     private wander(): void {
@@ -83,7 +88,7 @@ export class MovementBot extends MinecraftBot {
 
     private getPathRandomClosestPoint(): Vec3 {
         const currentPos: Vec3 = this.mineflayerBot.entity.position;
-        const pathPoints = BotManager.getPathFindingPoints();
+        const pathPoints = ConfigManager.getInstance().pathFindingPoints;
         let closestPoints: Array<Vec3> =  new Array<Vec3>();
         Object.keys(pathPoints).forEach(key => {
             const cordsArray: Array<number> = pathPoints[key];

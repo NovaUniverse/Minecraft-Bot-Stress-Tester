@@ -13,11 +13,11 @@ export class CombatBot extends MovementBot {
         this.isCombatEnabled = false;
         this.inCombat = false;
     }
+
     public connectBot(): void {
         super.connectBot();
         this.mineflayerBot.loadPlugin(pvp);
     }
-
 
     protected tick(): void {
         if (this.isCombatEnabled) {
@@ -39,7 +39,7 @@ export class CombatBot extends MovementBot {
         }
     }
 
-    private attack(player: Entity): void {
+    public attack(player: Entity): void {
         this.mineflayerBot.pvp.attack(player);
     }
     

@@ -1,17 +1,23 @@
 import * as fs from 'fs';
 import { Config } from "./Config";
-import { json } from "stream/consumers";
 
 
 export class ConfigManager {
 
     private static configManagerInstance: ConfigManager;
     private config!: Config;
-    
+    private _pathFindingPoints: any;
 
+
+    public get pathFindingPoints(): any {
+        return this._pathFindingPoints;
+    }
 
     private constructor() {
         this.loadConfig();
+        if (this.config.usePathFindingPoints) {
+            this.loadPathFindingPoints();
+        }
     }
     
     private loadConfig(): void {
@@ -22,10 +28,29 @@ export class ConfigManager {
         } catch {
             console.error('No Config. Generating Default Config')
             this.config  = Config.generateDefault();
-            fs.writeFileSync("./src/Config/BotConfig.json", JSON.stringify(this.config, null, 2))
-    
+            fs.writeFile("./src/Config/BotConfig.json", JSON.stringify(this.config, null, 2), (err: any) => {
+                if (err) console.log(err);
+            })
         }
 
+        if (!this.config.shouldBotWonder && !this.config.usePathFindingPoints) {
+            console.warn("shouldBotWonder and usePathFindingPoints are disabled. Bots that use pathfinding will not move on thier own")
+        }
+
+        if (this.config.shouldBotWonder && this.config.usePathFindingPoints) {
+            console.warn("shouldBotWonder and usePathFindingPoints are both enabled. Bots will priotise path points over wondering")
+        }
+    }
+
+    private loadPathFindingPoints(): void {
+        if(fs.existsSync("./src/Config/PathFindingPoints.json")) {
+            this._pathFindingPoints = JSON.parse(JSON.stringify(require("./Config/PathFindingPoints.json")))
+        } else {
+            console.error("PathFindingPoints.json does not exist in Configs. Disabling path finding points")
+            this.config.usePathFindingPoints = false;
+        }
+
+        
     }
 
     public static getInstance(): ConfigManager {

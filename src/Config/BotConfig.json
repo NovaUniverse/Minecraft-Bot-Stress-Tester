@@ -1,5 +1,6 @@
 {
-  "localhost": "0.0.0.0",
-  "isCombatEnabled": false,
-  "usePathFindingPoints": false
+  "_localhost": "0.0.0.0",
+  "_isCombatEnabled": false,
+  "_usePathFindingPoints": true,
+  "_shouldBotWonder": true
 }
