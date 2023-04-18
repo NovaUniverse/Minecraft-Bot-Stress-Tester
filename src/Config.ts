@@ -4,6 +4,8 @@ export class Config {
     private _isCombatEnabled: Boolean = false;
     private _usePathFindingPoints: Boolean = false;
     private _shouldBotWonder: Boolean = false;
+    private _mcVersion: string = "1.19";
+    private _botCount: number = 1;
 
     public get shouldBotWonder(): Boolean {
         return this._shouldBotWonder;
@@ -23,6 +25,14 @@ export class Config {
 
     public get isCombatEnabled(): Boolean {
         return this._isCombatEnabled;
+    }
+
+    public get mcVersion(): string {
+        return this._mcVersion;
+    }
+
+    public get botCount(): number {
+        return this._botCount;
     }
 
     public static generateDefault(): Config {

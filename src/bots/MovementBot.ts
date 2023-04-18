@@ -17,8 +17,8 @@ export class MovementBot extends MinecraftBot {
     private _isMoving: Boolean;
 
 
-    constructor(botName: string, server: string) {
-        super(botName, server)
+    constructor(botName: string, server: string, mcVersion: string) {
+        super(botName, server, mcVersion)
         this._isMoving = false;
         this.useSetPathPoints = false;
         this.doWonder = false;

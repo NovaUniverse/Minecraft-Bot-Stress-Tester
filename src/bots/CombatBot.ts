@@ -8,8 +8,8 @@ export class CombatBot extends MovementBot {
     private inCombat: Boolean;
     
 
-    constructor(botName: string, server: string) {
-        super(botName, server)
+    constructor(botName: string, server: string, mcVersion: string) {
+        super(botName, server, mcVersion)
         this.isCombatEnabled = false;
         this.inCombat = false;
     }
