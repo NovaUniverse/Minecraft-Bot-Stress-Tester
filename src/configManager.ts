@@ -49,8 +49,10 @@ export class ConfigManager {
             console.error("PathFindingPoints.json does not exist in Configs. Disabling path finding points")
             this.config.usePathFindingPoints = false;
         }
+    }
 
-        
+    public getConfig(): Config {
+        return this.config;
     }
 
     public static getInstance(): ConfigManager {

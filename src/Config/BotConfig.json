@@ -2,5 +2,7 @@
   "_localhost": "0.0.0.0",
   "_isCombatEnabled": false,
   "_usePathFindingPoints": true,
-  "_shouldBotWonder": true
+  "_shouldBotWonder": true,
+  "_botCount" : 1,
+  "_mcVersion": "1.19"
 }

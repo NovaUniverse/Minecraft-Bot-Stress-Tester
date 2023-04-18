@@ -5,15 +5,17 @@ import { IndexedData } from "minecraft-data";
 
 
 export class MinecraftBot {
+    protected mcVersion: string;
     protected botName: string;
     private server: string;
 
     protected mcData!: IndexedData;
     protected mineflayerBot!: Bot;
 
-    constructor(botName: string, server: string) {
+    constructor(botName: string, server: string, mcVersion: string) {
         this.botName = botName;
         this.server = server;
+        this.mcVersion = mcVersion;
     }
 
     public connectBot(): void {
@@ -21,7 +23,7 @@ export class MinecraftBot {
                 this.mineflayerBot = createBot({
                 host: this.server, // minecraft server ip
                 username: this.botName, // minecraft username
-                version: "1.19",
+                version: this.mcVersion,
             });
 
             console.log(this.botName + " is connecting");
@@ -30,7 +32,8 @@ export class MinecraftBot {
             this.mineflayerBot.on('physicTick', () => this.tick());
             this.mineflayerBot.on('chat', (username, message) => {this.onChat(username, message)})
             this.mineflayerBot.on('kicked', (err) => {
-                console.log(this.botName + " was kicked: \n" +  err)
+                console.log(this.botName + " was kicked: \n" +  err);
+                
             });
             this.mineflayerBot.on('error', (err) =>{
                 console.log(this.botName + ": Had an issue. Error Trace: ");
@@ -38,6 +41,11 @@ export class MinecraftBot {
             });
         };
 
+        
+    }
+
+    protected onKick(): void {
+        
         
     }
 
