@@ -20,10 +20,10 @@ export class MovementBot extends MinecraftBot {
     constructor(botName: string, server: string, mcVersion: string) {
         super(botName, server, mcVersion)
         this._isMoving = false;
-        this.useSetPathPoints = false;
-        this.doWonder = false;
+        this.useSetPathPoints = ConfigManager.getInstance().getConfig().usePathFindingPoints
+        this.doWonder = ConfigManager.getInstance().getConfig().shouldBotWonder;
         this.onWanderCooldown = false;
-        
+    
     }
 
     protected get isMoving(): Boolean {
@@ -47,12 +47,15 @@ export class MovementBot extends MinecraftBot {
 
     protected onJoin(): void {
         super.onJoin()
-        this.mineflayerBot.pathfinder.setMovements(new Movements(this.mineflayerBot, this.mcData));
+        this.mineflayerBot.pathfinder.setMovements(new Movements(this.mineflayerBot));
     }
     
 
     protected tick(): void {
+        
         if (this.useSetPathPoints && !this.isMoving) {
+            console.log(this.botName + ":Attempting to move")
+            this.isMoving = true;
             this.moveToNearestPathPoint();
         } else if (!this.isMoving && !this.onWanderCooldown && this.doWonder) {
             this.wander();
@@ -78,7 +81,7 @@ export class MovementBot extends MinecraftBot {
     private moveToNearestPathPoint(): void {
         const movePoint: Vec3 = this.getPathRandomClosestPoint();
         if (this.mineflayerBot.pathfinder.movements == null || undefined) {
-            this.mineflayerBot.pathfinder.setMovements(new Movements(this.mineflayerBot, this.mcData));
+            this.mineflayerBot.pathfinder.setMovements(new Movements(this.mineflayerBot));
             console.log("Updating Movement")
         }
         this.lastReachedPoint = movePoint.clone();
