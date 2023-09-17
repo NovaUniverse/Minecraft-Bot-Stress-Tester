@@ -1,7 +1,8 @@
-import { Bot, Player, createBot } from "mineflayer";
-import { Entity } from 'prismarine-entity'
+import {Bot, Player, createBot} from "mineflayer";
+import {Entity} from 'prismarine-entity'
 
-import { IndexedData } from "minecraft-data";
+import {IndexedData} from "minecraft-data";
+import {Console} from "inspector";
 
 
 export class MinecraftBot {
@@ -18,35 +19,38 @@ export class MinecraftBot {
         this.mcVersion = mcVersion;
     }
 
-    public connectBot(): void {
+    public async connectBot(): Promise<void> {
         if (!this.mineflayerBot) {
-                this.mineflayerBot = createBot({
+            this.mineflayerBot = createBot({
                 host: this.server, // minecraft server ip
                 username: this.botName, // minecraft username
                 version: this.mcVersion,
+                checkTimeoutInterval: 100 * 1000
             });
 
             console.log(this.botName + " is connecting");
-           
+
             this.mineflayerBot.on('playerJoined', () => this.onJoin());
-            this.mineflayerBot.on('physicTick', () => this.tick());
-            this.mineflayerBot.on('chat', (username, message) => {this.onChat(username, message)})
+            this.mineflayerBot.on('physicTick', async () => this.tick());
+            this.mineflayerBot.on('chat', (username, message) => {
+                this.onChat(username, message)
+            })
             this.mineflayerBot.on('kicked', (err) => {
-                console.log(this.botName + " was kicked: \n" +  err);
-                
+                console.log(this.botName + " was kicked: \n Attempting rejoin" + err);
+                this.onKick()
             });
-            this.mineflayerBot.on('error', (err) =>{
+            this.mineflayerBot.on('error', (err) => {
                 console.log(this.botName + ": Had an issue. Error Trace: ");
                 console.log(err);
-            });
-        };
 
-        
+                console.log("Attempt Reconnect for bot: " + this.botName);
+                this.connectBot()
+            });
+        }
     }
 
     protected onKick(): void {
-        
-        
+        this.connectBot()
     }
 
     protected tick(): void {
@@ -78,8 +82,8 @@ export class MinecraftBot {
     //         if (entity.type === 'player') {
     //             players.push(entity as Entity)
     //         }
-    //     }   
-        
+    //     }
+
     //     const botPosition = this.mineflayerBot.entity.position;
     //     players.sort((player1, player2) => {
     //         if (player1.position.distanceTo(botPosition) < player2.position.distanceTo(botPosition)) {

@@ -6,7 +6,7 @@ export class CombatBot extends MovementBot {
     private readonly botAggresionRange = 10;
     private isCombatEnabled: Boolean;
     private inCombat: Boolean;
-    
+
 
     constructor(botName: string, server: string, mcVersion: string) {
         super(botName, server, mcVersion)
@@ -14,7 +14,7 @@ export class CombatBot extends MovementBot {
         this.inCombat = false;
     }
 
-    public connectBot(): void {
+    public async connectBot(): Promise<void> {
         super.connectBot();
         this.mineflayerBot.loadPlugin(pvp);
     }
@@ -32,7 +32,7 @@ export class CombatBot extends MovementBot {
                 this.mineflayerBot.pvp.forceStop();
                 console.log("player out of range")
             }
-        } 
+        }
 
         if (!this.inCombat) {
             super.tick();
@@ -42,7 +42,7 @@ export class CombatBot extends MovementBot {
     public attack(player: Entity): void {
         this.mineflayerBot.pvp.attack(player);
     }
-    
+
     protected onChat(username: string, message: string): void {
         if (message == 'start') {
             this.isCombatEnabled = true;
@@ -50,7 +50,7 @@ export class CombatBot extends MovementBot {
 
         if (message == 'stop') {
             this.isCombatEnabled = false;
-            this.isMoving = false; 
+            this.isMoving = false;
             this.inCombat = false
             this.mineflayerBot.pvp.forceStop();
         }

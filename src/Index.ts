@@ -1,8 +1,7 @@
-import { BotManager } from './BotManager';
-import { ConfigManager } from './configManager';
+import {WorkerManager} from "./WorkerManager";
 
-var config = ConfigManager.getInstance().getConfig();
-const botManager = new BotManager("localhost", config.mcVersion);
+//Set working directory
+process.chdir("./build")
 
-botManager.launchBots(config.botCount);
-
+const workerManager = WorkerManager.getInstance();
+workerManager.startWorkers()

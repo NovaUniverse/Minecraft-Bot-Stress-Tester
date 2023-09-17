@@ -4,7 +4,10 @@
   "description": "Nova Universe stress tester for games",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node ./src/index.ts"
+    "build": "tsc",
+    "start": "node ./build/index.js",
+    "prestart": "npm run build",
+    "test": "npx nodemon"
   },
   "author": "kamrantekkit",
   "license": "ISC",
